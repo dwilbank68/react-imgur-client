@@ -1,28 +1,72 @@
-ReactStarter
-====
+Client ID:
+3ef636b310d792e
 
-Use this as a starting point for working on chapters of the [Learn and Understand React JS](https://www.udemy.com/learn-and-understand-reactjs/) course on Udemy.com.
+Client secret:
+4392fcfd022b218db388156aad20b9697470de9f
 
----
+reflux@0.2.8
 
-###Getting Started###
+# image-detail page
 
-There are two methods for getting started with this repo.
+if requested via
 
-####Familiar with Git?#####
-Checkout this repo, install dependencies, then start the gulp process with the following:
+    images/:id,
 
-```
-	> git clone git@github.com:StephenGrider/ReactStarter.git
-	> cd ReactStarter
-	> npm install
-	> gulp
-```
+#### routes.jsx catches it and calls
 
-####Not Familiar with Git?#####
-Click [here](https://github.com/StephenGrider/ReactStarter/releases) then download the .zip file.  Extract the contents of the zip file, then open your terminal, change to the project directory, and:
+#### ImageDetail component
 
-```
-	> npm install
-	> gulp
-```
+    componentWillMount(){
+        Actions.getImage(this.props.params.id);
+    },
+
+#### actions.jsx sees the action and since
+
+#### image-store.jsx is listening
+
+    listenables: [Actions],
+
+#### image-store.getImage is called
+
+    getImage(id){
+        Api.get('gallery/image/' +id)
+            .then(function(json){
+                if (this.images){
+                    this.images.push(json.data);
+                } else {
+                    this.images = [json.data];
+                }
+                this.triggerChange();
+            }
+            .bind(this))
+    },
+
+#### then triggerChange() emits 'change'
+
+#### and since image-detail.jsx is listening
+
+    mixins: [
+        Reflux.listenTo(ImageStore, 'onChange')
+    ],
+
+#### onChange fires off
+
+    onChange(){
+        this.setState({
+            image: ImageStore.find(this.props.params.id)
+        })
+    },
+
+#### which calls ImageStore.find
+
+    find(id){
+        var image = _.find(this.images, {id:id});
+        if (image){
+            return image;
+        } else {
+            this.getImage(id);
+            return null;
+        }
+    },
+
+#### and now setState triggers a re-render
