@@ -1,11 +1,3 @@
-Client ID:
-3ef636b310d792e
-
-Client secret:
-4392fcfd022b218db388156aad20b9697470de9f
-
-reflux@0.2.8
-
 # image-detail page
 
 if requested via
